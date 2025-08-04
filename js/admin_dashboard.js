@@ -446,36 +446,66 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const fetchAdditionalStats = async () => {
-        try {
-            const now = new Date();
-            const twentyFourHoursAgo = Timestamp.fromMillis(now.getTime() - 24 * 60 * 60 * 1000);
-            const applicantsSnapshot = await getDocs(applicantsCollection);
-            let interviewsToday = 0;
-            let newApplicants = 0;
-            applicantsSnapshot.forEach(docSnap => {
-                const data = docSnap.data();
-                if (data.submittedAt && data.submittedAt >= twentyFourHoursAgo) {
-                    newApplicants++;
+    // Set initial text to loading
+    jobPostingsCountElement.textContent = '...';
+    interviewsTodayCountElement.textContent = '...';
+    newApplicantsCountElement.textContent = '...';
+
+    try {
+        const now = new Date();
+        const startOfToday = new Date(now.setHours(0, 0, 0, 0));
+        const endOfToday = new Date(now.setHours(23, 59, 59, 999));
+        const twentyFourHoursAgo = Timestamp.fromMillis(Date.now() - 24 * 60 * 60 * 1000);
+
+        // --- Fetch All Applications ---
+        const applicantsSnapshot = await getDocs(applicantsCollection);
+        
+        let interviewsToday = 0;
+        let newApplicants = 0;
+        
+        applicantsSnapshot.forEach(docSnap => {
+            const data = docSnap.data();
+
+            // Check for new applicants
+            // IMPORTANT: Make sure your application documents have a 'submittedAt' timestamp field!
+            if (data.submittedAt && data.submittedAt >= twentyFourHoursAgo) {
+                newApplicants++;
+            }
+
+            // Check for interviews scheduled for today
+            if (data.interviewDate?.toDate) {
+                const interviewDate = data.interviewDate.toDate();
+                if (interviewDate >= startOfToday && interviewDate <= endOfToday) {
+                    interviewsToday++;
                 }
-                if (data.interviewDate?.toDate) {
-                    const interviewDate = data.interviewDate.toDate();
-                    if (interviewDate.toDateString() === now.toDateString()) {
-                        interviewsToday++;
-                    }
-                }
-            });
-            const postingsQuery = query(postingsCollection, where("status", "==", "Open"));
-            const postingsSnapshot = await getDocs(postingsQuery);
-            jobPostingsCountElement.textContent = postingsSnapshot.size;
-            interviewsTodayCountElement.textContent = interviewsToday;
-            newApplicantsCountElement.textContent = newApplicants;
-        } catch (err) {
-            console.error("Error fetching dashboard stats:", err);
-            jobPostingsCountElement.textContent = 'Err';
-            interviewsTodayCountElement.textContent = 'Err';
-            newApplicantsCountElement.textContent = 'Err';
+            }
+        });
+        
+        // --- Fetch ONLY Active Job Postings ---
+        const postingsQuery = query(postingsCollection, where("status", "==", "Open"));
+        const postingsSnapshot = await getDocs(postingsQuery);
+        
+        // --- Update the UI with the final counts ---
+        jobPostingsCountElement.textContent = postingsSnapshot.size;
+        interviewsTodayCountElement.textContent = interviewsToday;
+        newApplicantsCountElement.textContent = newApplicants;
+        
+        // Also update the interview count badge in the sidebar
+        const interviewBadge = document.getElementById('interview-count-badge');
+        if(interviewBadge) {
+            const interviewQuery = query(applicantsCollection, where("interviewDate", "!=", null));
+            const interviewSnapshot = await getDocs(interviewQuery);
+            interviewBadge.textContent = interviewSnapshot.size;
         }
-    };
+
+
+    } catch (err) {
+        console.error("Error fetching dashboard stats:", err);
+        jobPostingsCountElement.textContent = 'Err';
+        interviewsTodayCountElement.textContent = 'Err';
+        newApplicantsCountElement.textContent = 'Err';
+    }
+};
     
     const fetchAllData = () => {
         fetchApplicants();
