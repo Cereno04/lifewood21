@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Jobs - Lifewood</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="assets/img/food.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/availJobs.css">
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container">
+            <nav class="main-nav">
+                <a href="index.html" class="logo">
+                    <img src="assets/img/lifewood_cropped.png" alt="Lifewood Logo">
+                </a>
+                <ul class="nav-links">
+                    <li class="nav-link"><a href="index.html">Home</a></li>
+                    <li class="nav-link"><a href="about.html">About us</a></li>
+                    <li class="nav-link"><a href="service.html">Services</a></li>
+                    <li class="nav-link"><a href="contact.html">Contact</a></li>
+                    <li class="nav-link active"><a href="availJobs.html">Available Jobs</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="contact.html" class="btn btn-contact">Contact</a>
+                    <div class="language-selector">
+                        English <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                <button class="hamburger" aria-label="Toggle navigation menu">
+                    <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="job-search-section section-padding">
+            <div class="container">
+                <div class="job-search-header">
+                    <h1>Find Your Next Opportunity</h1>
+                    <p>Explore our open positions and discover where you fit in at Lifewood.</p>
+                </div>
+                <div class="job-search-layout">
+                    <!-- Left Panel: Job List -->
+                    <div class="job-list-panel">
+                        <div id="job-list-container">
+                            <p class="loading-text">Loading available positions...</p>
+                        </div>
+                    </div>
+                    <!-- Right Panel: Job Details -->
+                    <div class="job-details-panel">
+                        <div id="job-details-container">
+                            <div class="placeholder">
+                                <i class="fas fa-hand-pointer"></i>
+                                <h3>Select a job to see details</h3>
+                                <p>Choose a position from the list on the left to learn more about the role and how to apply.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- START: APPLICATION MODAL HTML (MOVED HERE) -->
+        <div id="applicationModal" class="modal-overlay">
+            <div class="form-container">
+                <span class="modal-close-btn">×</span>
+                <header>Application Form</header>
+                <form action="upload" id="applicationForm" method="post" enctype="multipart/form-data">
+                    <div class="fields">
+                        <div class="input-field"><label>First Name</label><input type="text" id="firstName" placeholder="Enter your first name" required></div>
+                        <div class="input-field"><label>Last Name</label><input type="text" id="lastName" placeholder="Enter your last name" required></div>
+                        <div class="input-field"><label>Email</label><input type="email" id="email" placeholder="Enter your email" required></div>
+                        <div class="input-field"><label>Age</label><input type="number" id="age" placeholder="Enter your age" required></div>
+                        <div class="input-field"><label>Degree</label><input type="text" id="degree" placeholder="e.g. B.S. in Computer Science" required></div>
+                        <div class="input-field"><label>Project Applied for</label><input type="text" id="projectName" placeholder="Enter project name" required></div>
+                        <div class="input-field"><label>Start of Available Time</label><input type="time" id="startTime" required></div>
+                        <div class="input-field"><label>End of Available Time</label><input type="time" id="endTime" required></div>
+                        <div class="input-field"><label>Resume Link (Google Drive, Linkedin, etc.)</label><input type="text" id="resumeLink" placeholder="Enter link to your resume" required></div>
+                        <div class="input-field full-width"><label>Relevant Job Experience</label><textarea id="experience" placeholder="Describe your relevant experience..." required></textarea></div>
+                    </div>
+                    <button type="submit" class="submit-btn"><span class="btnText">Submit</span><i class="uil uil-navigator"></i></button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+         <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col"><h4>Lifewood</h4><p>Pioneering the future with Artificial Intelligence.</p></div>
+                <div class="footer-col"><h4>Quick Links</h4><a href="about.html">About Us</a><br><a href="service.html">Services</a><br><a href="contact.html">Contact</a></div>
+                <div class="footer-col"><h4>Follow Us</h4><div class="footer-socials"><a href="#"><i class="fab fa-twitter"></i></a><a href="#"><i class="fab fa-facebook"></i></a><a href="#"><i class="fab fa-youtube"></i></a></div></div>
+            </div>
+            <div class="footer-bottom"><p>© 2025 Lifewood. All Rights Reserved.</p></div>
+        </div>
+    </footer>
+
+    <!-- Firebase and Page Logic (MERGED SCRIPT) -->
+    <script type="module">
+        import { db } from './js/firebase-config.js';
+        import { collection, getDocs, query, where, addDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- ALL DOM ELEMENTS ---
+            const jobListContainer = document.getElementById('job-list-container');
+            const jobDetailsContainer = document.getElementById('job-details-container');
+            const applicationModal = document.getElementById('applicationModal');
+            const applicationForm = document.getElementById('applicationForm');
+            const closeBtn = applicationModal.querySelector('.modal-close-btn');
+            
+            const jobsDataMap = new Map();
+
+            // --- MODAL LOGIC ---
+            const openModal = () => applicationModal.classList.add('show');
+            const closeModal = () => applicationModal.classList.remove('show');
+
+            closeBtn.addEventListener('click', closeModal);
+            applicationModal.addEventListener('click', (e) => {
+                if (e.target === applicationModal) closeModal();
+            });
+
+            // --- JOB DETAILS RENDERING ---
+            const renderJobDetails = (jobId) => {
+                const job = jobsDataMap.get(jobId);
+                if (!job) return;
+
+                const createTags = (items) => (items || []).map(item => `<span class="tag">${item}</span>`).join('');
+                const skills = job.requiredSkills ? job.requiredSkills.split(',').map(s => s.trim()) : [];
+
+                jobDetailsContainer.innerHTML = `
+                    <div class="detail-header">
+                        <h2>${job.jobTitle}</h2>
+                        <a href="#" class="company-link">${job.department} <i class="fas fa-external-link-alt"></i></a>
+                        <p class="location">${job.location}</p>
+                    </div>
+                    <div class="job-details-content">
+                        <h3>Job details</h3>
+                        <div class="detail-section"><h4><i class="fas fa-money-bill-wave"></i> Pay</h4><div class="detail-tags"><span class="tag salary-tag">PHP ${job.salaryMin} - PHP ${job.salaryMax} a month</span></div></div>
+                        <div class="detail-section"><h4><i class="fas fa-briefcase"></i> Job type</h4><div class="detail-tags">${createTags([job.jobType])}</div></div>
+                        <div class="detail-section"><h4><i class="fas fa-tools"></i> Skills</h4><div class="detail-tags">${createTags(skills)}</div></div>
+                        <div class="detail-section"><h4><i class="fas fa-align-left"></i> Description</h4><p class="description-text">${(job.description || '').replace(/\n/g, '<br>')}</p></div>
+                        <a href="#" class="btn btn-highlight apply-now-btn" data-job-title="${job.jobTitle}">Apply Now</a>
+                    </div>`;
+            };
+
+            // --- JOB LIST FETCHING & RENDERING ---
+            const fetchAndRenderJobs = async () => {
+                try {
+                    const postingsCollection = collection(db, 'jobPostings');
+                    const q = query(postingsCollection, where("status", "==", "Open"));
+                    const querySnapshot = await getDocs(q);
+
+                    if (querySnapshot.empty) {
+                        jobListContainer.innerHTML = '<p class="info-text">No open positions at this time.</p>';
+                        return;
+                    }
+
+                    let jobListHtml = '';
+                    querySnapshot.forEach(doc => {
+                        const job = doc.data();
+                        jobsDataMap.set(doc.id, job);
+                        jobListHtml += `<div class="job-card" data-id="${doc.id}"><h3>${job.jobTitle}</h3><p class="company-name">${job.department}</p><p class="location">${job.location}</p><p class="salary-info">PHP ${job.salaryMin} - PHP ${job.salaryMax} a month</p><div class="tags-container"><span class="tag">${job.jobType}</span></div><p class="easily-apply"><i class="fas fa-bolt"></i> Easily apply</p></div>`;
+                    });
+                    jobListContainer.innerHTML = jobListHtml;
+
+                } catch (error) {
+                    console.error("Error fetching jobs:", error);
+                    jobListContainer.innerHTML = '<p class="error-text">Could not load jobs. Please try again later.</p>';
+                }
+            };
+            
+            // --- EVENT DELEGATION FOR DYNAMIC BUTTONS ---
+            jobListContainer.addEventListener('click', (e) => {
+                const card = e.target.closest('.job-card');
+                if (card) {
+                    document.querySelectorAll('.job-card.active').forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                    renderJobDetails(card.dataset.id);
+                }
+            });
+
+            jobDetailsContainer.addEventListener('click', (e) => {
+                if (e.target.matches('.apply-now-btn')) {
+                    e.preventDefault();
+                    const jobTitle = e.target.dataset.jobTitle;
+                    applicationForm.querySelector('#projectName').value = jobTitle;
+                    openModal();
+                }
+            });
+            
+            // --- FORM SUBMISSION LOGIC ---
+            applicationForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitBtn = applicationForm.querySelector('button.submit-btn');
+                const btnText = submitBtn.querySelector('.btnText');
+                btnText.textContent = 'Submitting...';
+                submitBtn.disabled = true;
+
+                const formData = {
+                    firstName: document.getElementById('firstName').value,
+                    lastName: document.getElementById('lastName').value,
+                    email: document.getElementById('email').value,
+                    age: Number(document.getElementById('age').value),
+                    degree: document.getElementById('degree').value,
+                    projectName: document.getElementById('projectName').value,
+                    availableTimeStart: document.getElementById('startTime').value,
+                    availableTimeEnd: document.getElementById('endTime').value,
+                    resumeLink: document.getElementById('resumeLink').value,
+                    experience: document.getElementById('experience').value,
+                    submittedAt: new Date(),
+                    status: 'Pending'
+                };
+
+                try {
+                    await addDoc(collection(db, "applications"), formData);
+                    alert("Application submitted successfully!");
+                    applicationForm.reset();
+                    closeModal();
+                } catch (error) {
+                    console.error("Error adding document: ", error);
+                    alert("Error submitting application. Please try again.");
+                } finally {
+                    btnText.textContent = 'Submit';
+                    submitBtn.disabled = false;
+                }
+            });
+
+            fetchAndRenderJobs();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1205 @@
+/* ====================================================== */
+/* 1. GLOBAL STYLES & VARIABLES
+/* ====================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+:root {
+    --primary-color: #046241; /* Dark Green */
+    --accent-color: #FFB347; /* Orange/Gold */
+    --dark-text: #212529;
+    --body-text: #555;
+    --light-text: #f8f9fa;
+    --bg-light: #f8f9fa;
+    --bg-white: #ffffff;
+    --border-color: #dee2e6;
+    --shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    color: var(--body-text);
+    background-color: var(--bg-white);
+    line-height: 1.7;
+}
+
+h1, h2, h3, h4 {
+    font-weight: 600;
+    color: var(--dark-text);
+    line-height: 1.3;
+}
+
+h1 { font-size: clamp(2.5rem, 5vw, 3.5rem); }
+h2 { font-size: clamp(2rem, 4vw, 2.75rem); text-align: center; margin-bottom: 2rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.2rem; }
+
+a {
+    text-decoration: none;
+    color: var(--primary-color);
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--accent-color);
+}
+
+ul {
+    list-style: none;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.section-padding {
+    padding: 60px 0;
+}
+
+/* ====================================================== */
+/* 2. UTILITY CLASSES (BUTTONS, ETC.)
+/* ====================================================== */
+.btn {
+    display: inline-block;
+    padding: 12px 28px;
+    font-weight: 500;
+    font-size: 1rem;
+    background-color: #FFB347;
+    color: var(--dark-text);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    color: var(--dark-text);
+}
+
+.btn-highlight {
+    background-color: var(--accent-color);
+    color: var(--dark-text);
+    border-color: var(--accent-color);
+}
+
+.btn-highlight:hover {
+    background-color: #ffc163;
+    border-color: #ffc163;
+    color: var(--dark-text);
+}
+
+.btn-contact {
+    background: #FFB347;
+    border: 1px solid var(--primary-color);
+    color: White;
+    border-radius: 5px;
+}
+
+.btn-contact:hover {
+    background: var(--primary-color);
+    color: var(--light-text);
+}
+
+/* ====================================================== */
+/* 3. HEADER & NAVIGATION
+/* ====================================================== */
+.header {
+    background-color: var(--bg-white);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.main-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo img {
+    display: block;
+    width: 175px;
+}
+
+/* --- Mobile Menu Styles --- */
+.nav-links {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: var(--bg-white);
+    box-shadow: 0 10px 10px rgba(0,0,0,0.05);
+    
+    /* PERFORMANCE FIX: Replaced laggy 'max-height' with smooth 'transform' & 'opacity' */
+    opacity: 0;
+    transform: translateY(-10px);
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0s linear 0.3s;
+}
+
+.nav-links.active {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s;
+}
+
+/* --- Navigation Link Styling (No Background on Hover) --- */
+
+/* The list item container for the link */
+.nav-link {
+    text-align: center;
+}
+
+/* The link element itself */
+.nav-link a {
+    display: inline-block;
+    padding: 0.75rem 1rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--dark-text);
+    text-decoration: none;
+    position: relative;
+    transition: color 0.3s ease;
+    border-radius: 50px;
+}
+
+/* HOVER STATE: This is now the primary hover effect */
+.nav-link a:hover {
+    color: var(--primary-color);
+}
+
+/* ACTIVE STATE: For the current page link */
+.nav-link.active a {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* The underline for the active link */
+.nav-link.active a::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 25px;
+    height: 3px;
+    background-color: var(--accent-color);
+    border-radius: 2px;
+}
+
+.nav-actions {
+    display: none; /* Hide on mobile */
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.language-selector {
+    cursor: pointer;
+    font-weight: 500;
+}
+
+/* UPDATED HAMBURGER STYLES */
+.hamburger {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    /* --- NEW STYLES --- */
+    /* Reset default button styles to make it look like the old div */
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+.hamburger .bar {
+    width: 25px;
+    height: 3px;
+    background-color: var(--dark-text);
+    border-radius: 3px;
+    transition: all 0.3s ease-in-out;
+}
+
+.hamburger.active .bar:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+.hamburger.active .bar:nth-child(2) {
+    opacity: 0;
+}
+.hamburger.active .bar:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+/* ====================================================== */
+/* 4. HERO SECTION
+/* ====================================================== */
+.hero {
+    position: relative;
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--light-text);
+    overflow: hidden;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4));
+    z-index: 2;
+}
+
+.hero-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 3;
+    max-width: 800px;
+    margin: 0 auto;
+}
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero-content h1,
+.hero-content p,
+.hero-content .btn {
+    opacity: 0; 
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+.hero-content h1 {
+    color: var(--bg-white);
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+    margin-bottom: 1rem;
+    animation-delay: 0.2s;
+}
+
+.hero-content p {
+    font-size: 1.25rem;
+    margin-bottom: 2.5rem;
+    animation-delay: 0.5s;
+}
+
+.hero-content .btn {
+    animation-delay: 0.8s;
+}
+
+.hero-content .btn-highlight:hover {
+    transform: translateY(-3px) scale(1.05);
+}
+
+/* ====================================================== */
+/* 5. CONTENT SECTIONS
+/* ====================================================== */
+
+
+/* --- Solutions Section --- */
+.solutions-section {
+    background-color: #f8f7f3;
+}
+
+.solutions-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: 1fr;
+}
+
+.solution-card {
+    background-color: var(--bg-white);
+    padding: 2rem;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.solution-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.solution-card i {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    background-color: rgba(4, 98, 65, 0.1);
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    border-radius: 50%;
+    margin-bottom: 1.5rem;
+}
+
+.solution-card h3 {
+    margin-bottom: 1rem;
+}
+
+/* --- Process Section --- */
+.process-grid {
+    display: grid;
+    gap: 2rem;
+}
+
+.process-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    position: relative;
+}
+
+.process-step-number {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--border-color);
+    line-height: 1;
+}
+
+.process-step-content i {
+    font-size: 1.5rem;
+    color: var(--accent-color);
+    margin-right: 0.5rem;
+    vertical-align: middle;
+}
+
+.process-step-content h4 {
+    display: inline;
+}
+
+.process-step-content p {
+    margin-top: 0.5rem;
+}
+
+/* --- Why Lifewood Section --- */
+.why-lifewood-section {
+    background-color: #F9F7F7;
+}
+.why-lifewood-grid {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+    grid-template-columns: 1fr;
+}
+
+.why-lifewood-image img {
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+
+.why-lifewood-content h2 {
+    text-align: left;
+    margin-bottom: 1.5rem;
+}
+.why-lifewood-content p {
+    margin-bottom: 1.5rem;
+}
+
+/* --- CTA Section --- */
+.cta-section {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+    padding: 60px 0;
+    text-align: center;
+}
+.cta-section .btn {
+    margin: 0.5rem 0.5rem;
+}
+
+.cta-section h2, .cta-section p {
+    color: var(--light-text);
+}
+
+.cta-section h2 {
+    margin-bottom: 1rem;
+}
+.cta-section p {
+    max-width: 600px;
+    margin: 0 auto 2rem auto;
+    opacity: 0.9;
+}
+
+.cta-section .btn-highlight {
+    background-color: var(--accent-color);
+    color: var(--dark-text);
+    border: none;
+    padding: 12px 30px; 
+    border-radius: 10px;
+}
+.cta-section .btn-highlight:hover {
+    background-color: var(--light-text);
+    color: var(--primary-color);
+}
+
+.eco-innovation-section {
+    background-color: #F9F7F5; /* The very light, warm off-white from the image */
+}
+
+.eco-innovation-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Stacks columns on mobile by default */
+    gap: 2rem;
+    align-items: center;
+}
+
+.eco-innovation-content h2 {
+    text-align: left; /* Overrides the default centered h2 */
+    color: #133020; /* A darker, richer green matching the image */
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+}
+
+.eco-innovation-content p {
+    text-align: left;
+    max-width: 100%;
+    margin-bottom: 2rem;
+    color: var(--dark-text); /* Use the darker text for better contrast */
+}
+
+.eco-innovation-image img {
+    border-radius: 16px; /* The rounded corners from the image */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* The soft shadow for depth */
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+/* --- New Outline Button Style --- */
+.btn-outline {
+     background-color: var(--accent-color);
+    color: #133020;
+    font-weight: 600;
+    padding: 10px 26px;
+}
+
+.btn-outline:hover {
+    background: #133020;
+    color: var(--bg-white);
+    border-color: #133020;
+}
+
+/* ====================================================== */
+/* 6. FOOTER
+/* ====================================================== */
+.footer {
+    background-color: #133020;
+    color: #ccc;
+    padding: 50px 0 20px 0;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.footer-col h4 {
+    color: var(--bg-white);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.footer-col a {
+    color: #ccc;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
+.footer-col a:hover {
+    color: var(--accent-color);
+}
+
+.footer-socials a {
+    color: var(--light-text);
+    font-size: 1.5rem;
+    margin-right: 1rem;
+}
+
+.footer-socials a:hover {
+    color: var(--accent-color);
+    transform: scale(1.1);
+}
+
+.footer-bottom {
+    border-top: 1px solid #444;
+    padding-top: 1.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #888;
+}
+
+.footer-bottom a {
+    color: transparent;
+    cursor: pointer;
+}
+
+/* ====================================================== */
+/* 7. SCROLL REVEAL ANIMATION
+/* ====================================================== */
+.reveal {
+    color: #046241;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.solution-card.reveal:nth-child(2) { transition-delay: 200ms; }
+.solution-card.reveal:nth-child(3) { transition-delay: 400ms; }
+.process-step.reveal:nth-child(2) { transition-delay: 200ms; }
+.process-step.reveal:nth-child(3) { transition-delay: 400ms; }
+
+/* ====================================================== */
+/* 8. RESPONSIVENESS (MEDIA QUERIES)
+/* ====================================================== */
+@media (max-width: 600px) {
+    .cta-section .btn {
+        display: block; 
+        margin: 0 auto 1rem auto;
+        max-width: 320px;
+    }
+}
+/* --- Mobile Specific Tweaks (up to 767px) --- */
+@media (max-width: 767px) {
+
+    /* Hero Content */
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+    }
+
+    .hero-content .btn {
+        font-size: 1rem;
+        padding: 10px 20px;
+    }
+
+    /* Section Padding */
+    .section-padding {
+        padding: 40px 1rem;
+    }
+
+    /* Footer */
+    .footer-grid {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .footer-socials a {
+        margin: 0 0.5rem;
+    }
+
+    /* Navigation tweaks */
+    .nav-link a {
+        padding: 0.5rem 1rem;
+    }
+
+    /* About Page */
+    .who-we-are-image img {
+        height: 200px;
+    }
+
+    .who-we-are-content h2 {
+        font-size: 1.75rem;
+    }
+
+    .who-we-are-content .lead-paragraph {
+        font-size: 1rem;
+    }
+
+    /* Contact Page */
+    .contact-details-list li {
+        font-size: 1rem;
+    }
+
+    .contact-details-list i {
+        font-size: 1.25rem;
+        margin-right: 1rem;
+    }
+
+    .contact-form .btn {
+        font-size: 1rem;
+        padding: 12px;
+    }
+
+    /* Eco-Innovation image */
+    .eco-innovation-image img {
+        height: 200px;
+    }
+
+    /* CTA Section */
+    .cta-section .btn-highlight {
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
+
+    /* Why Lifewood section spacing */
+    .why-lifewood-grid {
+        gap: 2rem;
+    }
+
+    /* Grid spacing improvements */
+    .solutions-grid,
+    .process-grid,
+    .who-we-are-features {
+        gap: 1.5rem;
+    }
+
+    /* Process steps tweak */
+    .process-step {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .process-step-number {
+        font-size: 2rem;
+    }
+
+    /* Adjust heading margins */
+    h2 {
+        margin-bottom: 1.5rem;
+    }
+
+    .page-header {
+        padding: 40px 0;
+    }
+
+    .page-header h1 {
+        font-size: 1.75rem;
+    }
+
+    .page-header p {
+        font-size: 1rem;
+    }
+
+    /* Form field sizing */
+    .form-group input,
+    .form-group textarea {
+        font-size: 0.95rem;
+        padding: 10px 12px;
+    }
+
+    /* Buttons */
+    .btn {
+        font-size: 0.95rem;
+        padding: 10px 18px;
+    }
+}
+
+/* --- Tablets and Up (768px and up) --- */
+@media (min-width: 768px) {
+    .eco-innovation-grid {
+        grid-template-columns: repeat(2, 1fr); /* Creates two columns on tablets and larger */
+        gap: 3rem;
+    }
+    
+    /* Navigation */
+    .hamburger {
+        display: none;
+    }
+    .nav-links {
+        position: static;
+        flex-direction: row;
+        width: auto;
+        background-color: transparent;
+        box-shadow: none;
+        padding: 0;
+        align-items: center;
+        gap: 1rem;
+        
+        /* Ensure mobile animation styles are turned off for desktop */
+        opacity: 1;
+        transform: none;
+        visibility: visible;
+        pointer-events: auto;
+    }
+    .nav-link {
+        padding: 0;
+    }
+    .main-nav {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 2rem;
+    }
+    .nav-links {
+        justify-content: center;
+    }
+    .nav-actions {
+        display: flex;
+    }
+
+    /* Grids */
+    .solutions-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+    .why-lifewood-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+    }
+    .footer-grid {
+        grid-template-columns: 2fr 1fr 1fr;
+    }
+
+    /* Process Section with Connector Lines */
+    .process-step {
+        padding-bottom: 2rem;
+    }
+    .process-step:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        left: 25px; /* Aligns with the number */
+        top: 60px; /* Starts below the number */
+        width: 2px;
+        height: calc(100% - 30px);
+        background: repeating-linear-gradient(
+            to bottom,
+            var(--border-color),
+            var(--border-color) 5px,
+            transparent 5px,
+            transparent 10px
+        );
+    }
+    .process-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+    .process-step:not(:last-child)::after {
+        /* Switch line to horizontal for desktop view */
+        left: 100%;
+        top: 25px; /* Vertically centered on number */
+        width: calc(100% - 50px);
+        height: 2px;
+        transform: translate(-50%, 0);
+    }
+}
+
+.global-presence-section {
+    background-color: var(--bg-light); /* Consistent light background */
+    text-align: center;
+}
+
+.global-subheadline {
+    max-width: 600px;
+    margin: 0 auto 2.5rem auto; /* Centers the subheadline and adds space below */
+    color: var(--body-text);
+    font-size: 1.1rem;
+}
+
+.global-map img {
+    max-width: 80%;
+    height: 260px;
+    border:#ececec solid 2px;
+    max-height: 400px; /* Prevents the map from being excessively tall */
+    margin: 0 auto 3rem auto; /* Centers map and adds space below */
+/*     opacity: 0.7; */
+}
+
+.global-locations-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Default to a single column for mobile */
+    gap: 1.5rem;
+    max-width: 1000px;
+    margin: 0 auto; /* Center the grid container itself */
+}
+
+.global-location-item {
+    background-color: var(--bg-white);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.global-location-item:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow);
+}
+
+.global-location-item i {
+    font-size: 2rem;
+    color: var(--primary-color); /* Uses your site's main green color */
+    margin-bottom: 1rem;
+}
+
+.global-location-item h4 {
+    color: var(--dark-text);
+    margin-bottom: 0.25rem;
+    font-size: 1.1rem;
+}
+
+.global-location-item p {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+    color: var(--body-text);
+}
+
+
+
+
+/*
+ * ====================================================================
+ * NEW: TABLET-ONLY NAVIGATION OVERRIDE
+ *
+ * This block forces the hamburger menu for screen sizes between
+ * 768px and 1023px, overriding the desktop styles above.
+ * ====================================================================
+ */
+@media (min-width: 576px) {
+    .global-locations-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+@media (min-width: 768px) and (max-width: 1023.98px) {
+    /* Restore the hamburger icon */
+    .hamburger {
+        display: flex;
+    }
+    /* Hide the desktop actions */
+    .nav-actions {
+        display: none;
+    }
+    /* Revert nav to mobile layout */
+    .main-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        grid-template-columns: none;
+        gap: 0;
+    }
+    /* Revert links to hidden dropdown */
+    .nav-links {
+        position: absolute;
+        flex-direction: column;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: var(--bg-white);
+        box-shadow: 0 10px 10px rgba(0,0,0,0.05);
+        gap: 0;
+        justify-content: initial;
+        
+        /* Ensure the smooth animation styles are applied here too */
+        opacity: 0;
+        transform: translateY(-10px);
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0s linear 0.3s;
+    }
+    /* Ensure JS toggle works */
+    .nav-links.active {
+        opacity: 1;
+        transform: translateY(0);
+        visibility: visible;
+        pointer-events: auto;
+        transition-delay: 0s;
+    }
+}
+
+
+/* --- Laptops & Desktops (1024px and up) --- */
+@media (min-width: 1024px) {
+    .eco-innovation-grid {
+        gap: 5rem; /* Increase gap on larger screens for more breathing room */
+    }
+    .solutions-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .why-lifewood-grid {
+        gap: 4rem;
+    }
+}
+
+/* ====================================================== */
+/* 9. ADDITIONAL PAGE STYLES (ABOUT, SERVICES, CONTACT)
+/* ====================================================== */
+
+/* --- Generic Page Header --- */
+.page-header {
+    background-color: #f5eedb; /* Matches solutions section bg */
+    padding: 249px 0; /* Adjusted padding */
+    text-align: center;
+}
+
+.page-header h1 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.page-header p {
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+    color: var(--body-text);
+}
+
+/* --- Contact Page Specifics --- */
+.contact-section {
+    background-color: var(--bg-white);
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+}
+
+.contact-form-wrapper h3, .contact-details-wrapper h3 {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+    color: var(--dark-text);
+}
+
+/* Form Styling */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--dark-text);
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(4, 98, 65, 0.1);
+}
+
+.contact-form .btn {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+/* Contact Details Styling */
+.contact-details-list {
+    list-style: none;
+    margin-bottom: 2rem;
+}
+
+.contact-details-list li {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+}
+
+.contact-details-list i {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-right: 1.5rem;
+    width: 25px;
+    text-align: center;
+    margin-top: 3px;
+}
+
+.contact-map iframe {
+    border-radius: 8px;
+    filter: grayscale(1);
+    transition: filter 0.3s ease;
+}
+
+.contact-map iframe:hover {
+    filter: grayscale(0);
+}
+
+/* --- Responsive Adjustments for New Sections --- */
+@media (min-width: 992px) {
+    .contact-grid {
+        grid-template-columns: 1.2fr 1fr; /* Give form a bit more space */
+    }
+     .global-locations-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+/* ====================================================== */
+/* 10. "WHO WE ARE" SECTION (ABOUT PAGE)
+/* ====================================================== */
+.who-we-are-section {
+    background-color: var(--bg-white);
+    text-align: center;
+}
+
+.who-we-are-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: center;
+}
+
+.who-we-are-image img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.who-we-are-content h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: clamp(2rem, 4vw, 2.5rem);
+}
+
+.who-we-are-content .lead-paragraph {
+    font-size: 1.2rem;
+    color: var(--body-text);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.who-we-are-content p {
+    margin-bottom: 2rem;
+}
+
+.who-we-are-features {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-top: 2.5rem;
+}
+
+.feature-item {
+    /* display: flex; */
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.feature-icon {
+    color: var(--primary-color); /* Using brand color instead of blue */
+    font-size: 1.75rem;
+    flex-shrink: 0;
+    margin-top: 5px;
+}
+
+.feature-text h4 {
+    color: var(--dark-text);
+    margin-bottom: 0.25rem;
+    font-size: 1.1rem;
+}
+
+.feature-text p {
+    font-size: 0.95rem;
+    color: var(--body-text);
+    margin-bottom: 0;
+    line-height: 1.6;
+}
+
+/* Responsive adjustments for the new section */
+@media (min-width: 992px) {
+    .who-we-are-grid {
+        grid-template-columns: 1fr 1.1fr; /* Image and text columns */
+        gap: 4rem;
+    }
+    
+    .who-we-are-features {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ====================================================== */
+/* 11. MODAL FUNCTIONALITY - NO FORM STYLING CHANGES      */
+/* ====================================================== */
+
+/* This styles the full-screen dark background. */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex; /* Centers the form container inside */
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    padding: 1rem;
+    
+    /* Hides the modal by default */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+/* This class is added by your JavaScript to show the modal */
+.modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* This ensures the form container itself can be scrolled on small screens if needed */
+.form-container {
+    max-height: 90vh;
+    overflow-y: auto;
+}

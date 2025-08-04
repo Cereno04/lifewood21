@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Job Applicants</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/admin_dashboard.css">
+    <link rel="icon" type="image/png" href="assets/img/user-setting.png">
+    <!-- Updated EmailJS SDK to the modern v4 -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>   
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <!-- IMPORTANT: Use a public HTTPS link for the logo -->
+                <img src="assets/img/lifewood_cropped.png" alt="Lifewood Logo" class="sidebar-logo">
+                <span class="sidebar-close-btn">×</span>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a class="active" data-target="page-dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                    <li><a data-target="page-applicants"><i class="fas fa-users"></i> <span>Applicants</span></a></li>
+                    <li><a data-target="page-postings"><i class="fas fa-briefcase"></i> <span>Job Postings</span></a></li>
+                    <li><a data-target="page-interviews"><i class="fas fa-calendar-alt"></i> <span>Interviews</span> <span class="nav-badge" id="interview-count-badge">0</span></a></li>
+                    <li><a id="logout-btn"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <div class="main-content">
+            <header class="main-header">
+                <div class="menu-toggle"><i class="fas fa-bars"></i></div>
+            </header>
+
+            <main class="dashboard-content">
+                <!-- Dashboard Page -->
+                <div id="page-dashboard" class="page-content active">
+                    <div class="content-header"><h1>Dashboard Overview: </h1></div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <i class="fas fa-users"></i>
+                            <div class="info"><h3 id="total-applicants-count">...</h3><p>Total Applicants</p></div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-briefcase"></i>
+                            <div class="info"><h3 id="job-postings-count">...</h3><p>Active Job Postings</p></div>
+                        </div>
+                         <div class="stat-card">
+                            <i class="fas fa-calendar-check"></i>
+                            <div class="info"><h3 id="interviews-today-count">...</h3><p>Interviews Today</p></div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-file-alt"></i>
+                            <div class="info"><h3 id="new-applicants-count">...</h3><p>New Applicants (24h)</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Applicants Page -->
+                <div id="page-applicants" class="page-content">
+                    <div class="content-header"><h1>Job Applicants Dashboard: </h1></div>
+                    <div class="table-wrapper">
+                        <table class="table-bordered">
+                            <thead><tr><th>⇅ Name</th><th>⇅ Email</th><th>⇅ Status</th><th>⇅ Project Applied For</th><th>⇅ Actions</th></tr></thead>
+                            <tbody id="applicantsTableBody"><tr><td colspan="5" style="text-align:center;">Loading applicants...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Postings Page -->
+                <div id="page-postings" class="page-content">
+                    <div class="content-header">
+                        <h1>Manage Job Postings: </h1>
+                        <button id="addPostingBtn" class="btn btn-primary"><i class="fas fa-plus"></i> Add New Posting</button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>⇅ Job Title</th>
+                                    <th>⇅ Department</th>
+                                    <th>⇅ Status</th>
+                                    <th>⇅ Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="postingsTableBody"><tr><td colspan="4" style="text-align:center;">Loading job postings...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Interviews Page -->
+                <div id="page-interviews" class="page-content">
+                    <div class="content-header"><h1>Upcoming Interviews: </h1></div>
+                    <div class="table-wrapper">
+                         <table class="table-bordered">
+                            <thead><tr><th>⇅ Candidate</th><th>⇅ Position</th><th>⇅ Date & Time</th><th>⇅ Interviewer</th><th>⇅ Status</th></tr></thead>
+                            <tbody id="interviewsTableBody"><tr><td colspan="5" style="text-align:center;">Loading interviews...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Applicant Modal -->
+    <div id="applicantModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn">×</span>
+            <h2 id="modalTitle">Edit Applicant</h2>
+            <form id="applicantForm">
+                <input type="hidden" id="applicantId">
+                <div class="form-grid">
+                    <!-- --- THESE FIELDS ARE NOW READONLY --- -->
+                    <div class="form-group"><label for="firstName">First Name</label><input type="text" id="firstName" required readonly></div>
+                    <div class="form-group"><label for="lastName">Last Name</label><input type="text" id="lastName" required readonly></div>
+                    <div class="form-group"><label for="email">Email</label><input type="email" id="email" required readonly></div>
+                    <div class="form-group"><label for="age">Age</label><input type="number" id="age" required readonly></div>
+                    <div class="form-group"><label for="degree">Degree</label><input type="text" id="degree" required readonly></div>
+                    <div class="form-group"><label for="projectName">Project Applied For</label><input type="text" id="projectName" required readonly></div>
+                    <div class="form-group"><label for="startTime">Start of Available Time</label><input type="text" id="startTime" required readonly></div>
+                    <div class="form-group"><label for="endTime">End of Available Time</label><input type="text" id="endTime" required readonly></div>
+                </div>
+                <div class="form-group full-width"><label for="resumeLink">Resume Link</label><input type="url" id="resumeLink" placeholder="https://..." required readonly></div>
+                <div class="form-group full-width"><label for="experience">Relevant Experience</label><textarea id="experience" rows="4" required readonly></textarea></div>
+                
+                <!-- --- THESE FIELDS REMAIN EDITABLE --- -->
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="status">Application Status</label>
+                        <select id="status" name="status">
+                            <option value="Pending">Pending</option>
+                            <option value="Interview for Schedule">Schedule for Interview</option>
+                            <option value="Rejected">Rejected</option>
+                            <option value="Hired">Hired</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="interviewDate">Interview Date & Time</label>
+                        <input type="datetime-local" id="interviewDate">
+                    </div>
+                </div>
+                <div class="form-actions"><button type="submit" class="btn btn-primary">Save Applicant</button></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Posting Modal -->
+    <div id="postingModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn">×</span>
+            <h2 id="postingModalTitle">Add New Job Posting</h2>
+            <form id="postingForm">
+                <input type="hidden" id="postingId">
+                
+                <div class="form-group full-width"><label for="jobTitle">Job Title</label><input type="text" id="jobTitle" placeholder="e.g., Senior Frontend Developer" required></div>
+                <div class="form-group full-width"><label for="department">Department</label><input type="text" id="department" placeholder="e.g., Technology" required></div>
+                <div class="form-group full-width"><label for="location">Location</label><input type="text" id="location" placeholder="e.g., Cebu, Remote, Makati" required></div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="jobType">Job Type</label>
+                        <select id="jobType" required>
+                            <option value="Full-time">Full-time</option>
+                            <option value="Part-time">Part-time</option>
+                            <option value="Internship">Internship</option>
+                            <option value="Contract">Contract</option>
+                            <option value="Freelance">Freelance</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="applicationDeadline">Application Deadline</label>
+                        <input type="date" id="applicationDeadline" required>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="salaryMin">Salary Range (Min)</label>
+                        <input type="number" id="salaryMin" placeholder="e.g., 20000" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="salaryMax">Salary Range (Max)</label>
+                        <input type="number" id="salaryMax" placeholder="e.g., 30000" min="0">
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="description">Description</label>
+                    <textarea id="description" rows="4" placeholder="Brief job responsibilities or summary..."></textarea>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="requiredSkills">Required Skills (comma-separated)</label>
+                    <input type="text" id="requiredSkills" placeholder="e.g., HTML, CSS, JavaScript, Communication" required>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="hiringManager">Hiring Manager</label>
+                        <select id="hiringManager" required>
+                            <option value="" disabled selected>Select a manager</option>
+                            <option value="john.doe">John Doe</option>
+                            <option value="jane.smith">Jane Smith</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="postingStatus">Status</label>
+                        <select id="postingStatus" name="status" required>
+                            <option value="Open">Open</option>
+                            <option value="Closed">Closed</option>
+                            <option value="Draft">Draft</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save Posting</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Custom Alert Modal -->
+    <div id="customAlertModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 450px; text-align: center;">
+            <i id="customAlertIcon" class="fas modal-icon"></i>
+            <h2 id="customAlertTitle" style="margin-bottom: 15px;">Notification</h2>
+            <p id="customAlertMessage" style="font-size: 16px; margin-bottom: 25px; line-height: 1.6;"></p>
+            <button id="customAlertCloseBtn" class="btn btn-primary">OK</button>
+        </div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div id="confirmModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 450px; text-align: center;">
+            <i id="confirmModalIcon" class="fas modal-icon"></i>
+            <h2 id="confirmModalTitle" style="margin-bottom: 15px;">Confirm Action</h2>
+            <p id="confirmModalMessage" style="font-size: 16px; margin-bottom: 25px; line-height: 1.6;"></p>
+            <div class="form-actions" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+                 <button id="confirmModalNoBtn" class="btn btn-secondary">Cancel</button>
+                 <button id="confirmModalYesBtn" class="btn btn-primary">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="./js/admin_dashboard.js"></script>
+
+    <!-- Navigation and Page Switching Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('.sidebar-nav a');
+            const contentPages = document.querySelectorAll('.page-content');
+            const menuToggle = document.querySelector('.menu-toggle');
+            const sidebar = document.querySelector('.sidebar');
+            const logoutBtn = document.getElementById('logout-btn');
+            const mainContent = document.querySelector('.main-content');
+            const sidebarCloseBtn = document.querySelector('.sidebar-close-btn');
+            const confirmModal = document.getElementById('confirmModal');
+            const confirmModalTitle = document.getElementById('confirmModalTitle');
+            const confirmModalMessage = document.getElementById('confirmModalMessage');
+            const confirmModalIcon = document.getElementById('confirmModalIcon');
+            const confirmModalYesBtn = document.getElementById('confirmModalYesBtn');
+            const confirmModalNoBtn = document.getElementById('confirmModalNoBtn');
+            let onConfirmCallback = null;
+
+            function showConfirmationModal(title, message, iconClass, confirmText, onConfirm) {
+                confirmModalTitle.textContent = title;
+                confirmModalMessage.innerHTML = message;
+                confirmModalIcon.className = `fas ${iconClass} modal-icon icon-warning`;
+                confirmModalYesBtn.textContent = confirmText;
+                onConfirmCallback = onConfirm;
+                confirmModal.classList.add('is-visible');
+            }
+
+            function hideConfirmationModal() {
+                confirmModal.classList.remove('is-visible');
+                onConfirmCallback = null;
+            }
+
+            if (confirmModalYesBtn) {
+                confirmModalYesBtn.addEventListener('click', () => {
+                    if (typeof onConfirmCallback === 'function') {
+                        onConfirmCallback();
+                    }
+                    hideConfirmationModal();
+                });
+            }
+
+            if (confirmModalNoBtn) {
+                confirmModalNoBtn.addEventListener('click', hideConfirmationModal);
+            }
+            
+            if (confirmModal) {
+                confirmModal.addEventListener('click', (e) => {
+                    if (e.target === confirmModal) {
+                        hideConfirmationModal();
+                    }
+                });
+            }
+
+            function switchPage(targetId) {
+                contentPages.forEach(page => page.classList.remove('active'));
+                const targetPage = document.getElementById(targetId);
+                if (targetPage) targetPage.classList.add('active');
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.dataset.target === targetId) {
+                        link.classList.add('active');
+                    }
+                });
+                
+                if (sidebar.classList.contains('is-open')) {
+                    sidebar.classList.remove('is-open');
+                    document.body.classList.remove('sidebar-open');
+                }
+            }
+
+            navLinks.forEach(link => {
+                if (link.dataset.target) {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        switchPage(link.dataset.target);
+                    });
+                }
+            });
+
+            if (menuToggle) {
+                menuToggle.addEventListener('click', (e) => {
+                    e.stopPropagation(); 
+                    sidebar.classList.toggle('is-open');
+                    document.body.classList.toggle('sidebar-open');
+                });
+            }
+
+            if (mainContent) {
+                mainContent.addEventListener('click', () => {
+                    if (sidebar.classList.contains('is-open')) {
+                        sidebar.classList.remove('is-open');
+                        document.body.classList.remove('sidebar-open');
+                    }
+                });
+            }
+            
+            if (sidebarCloseBtn) {
+                sidebarCloseBtn.addEventListener('click', () => {
+                    sidebar.classList.remove('is-open');
+                    document.body.classList.remove('sidebar-open');
+                });
+            }
+            
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showConfirmationModal(
+                        'Confirm Logout',
+                        'Are you sure you want to logout?',
+                        'fa-sign-out-alt',
+                        'Logout',
+                        () => {
+                            window.location.href = 'admin.html';
+                        }
+                    );
+                });
+            }
+        });
+    </script>
+</body>
+</html>
