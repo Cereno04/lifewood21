@@ -14,9 +14,7 @@
     <header class="header">
         <div class="container">
             <nav class="main-nav">
-                <a href="index.html" class="logo">
-                    <img src="assets/img/lifewood_cropped.png" alt="Lifewood Logo">
-                </a>
+                <a href="index.html" class="logo"><img src="assets/img/lifewood_cropped.png" alt="Lifewood Logo"></a>
                 <ul class="nav-links">
                     <li class="nav-link"><a href="index.html">Home</a></li>
                     <li class="nav-link"><a href="about.html">About us</a></li>
@@ -26,13 +24,9 @@
                 </ul>
                 <div class="nav-actions">
                     <a href="contact.html" class="btn btn-contact">Contact</a>
-                    <div class="language-selector">
-                        English <i class="fas fa-chevron-down"></i>
-                    </div>
+                    <div class="language-selector">English <i class="fas fa-chevron-down"></i></div>
                 </div>
-                <button class="hamburger" aria-label="Toggle navigation menu">
-                    <span class="bar"></span><span class="bar"></span><span class="bar"></span>
-                </button>
+                <button class="hamburger" aria-label="Toggle navigation menu"><span class="bar"></span><span class="bar"></span><span class="bar"></span></button>
             </nav>
         </div>
     </header>
@@ -45,27 +39,13 @@
                     <p>Explore our open positions and discover where you fit in at Lifewood.</p>
                 </div>
                 <div class="job-search-layout">
-                    <!-- Left Panel: Job List -->
-                    <div class="job-list-panel">
-                        <div id="job-list-container">
-                            <p class="loading-text">Loading available positions...</p>
-                        </div>
-                    </div>
-                    <!-- Right Panel: Job Details -->
-                    <div class="job-details-panel">
-                        <div id="job-details-container">
-                            <div class="placeholder">
-                                <i class="fas fa-hand-pointer"></i>
-                                <h3>Select a job to see details</h3>
-                                <p>Choose a position from the list on the left to learn more about the role and how to apply.</p>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="job-list-panel"><div id="job-list-container"><p class="loading-text">Loading available positions...</p></div></div>
+                    <div class="job-details-panel"><div id="job-details-container"><div class="placeholder"><i class="fas fa-hand-pointer"></i><h3>Select a job to see details</h3><p>Choose a position from the list on the left to learn more about the role and how to apply.</p></div></div></div>
                 </div>
             </div>
         </section>
 
-        <!-- START: APPLICATION MODAL HTML (MOVED HERE) -->
+        <!-- APPLICATION MODAL HTML -->
         <div id="applicationModal" class="modal-overlay">
             <div class="form-container">
                 <span class="modal-close-btn">×</span>
@@ -87,6 +67,16 @@
                 </form>
             </div>
         </div>
+        
+        <!-- NEW SUCCESS ALERT MODAL -->
+        <div id="successModal" class="success-modal-overlay">
+            <div class="success-modal-content">
+                <div class="success-modal-icon"></div>
+                <h3>Success!</h3>
+                <p>Your application has been submitted. We will be in touch shortly.</p>
+                <button id="successModalOkBtn" class="success-modal-ok-btn">OK</button>
+            </div>
+        </div>
     </main>
 
     <!-- FOOTER -->
@@ -100,32 +90,41 @@
             <div class="footer-bottom"><p>© 2025 Lifewood. All Rights Reserved.</p></div>
         </div>
     </footer>
+    
+    <!-- START: SCRIPT FOR HAMBURGER MENU -->
+    <script src="js/script.js"></script>
+    <!-- END: SCRIPT FOR HAMBURGER MENU -->
 
-    <!-- Firebase and Page Logic (MERGED SCRIPT) -->
+    <!-- Firebase and Page Logic (UPDATED SCRIPT) -->
     <script type="module">
         import { db } from './js/firebase-config.js';
         import { collection, getDocs, query, where, addDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
         document.addEventListener('DOMContentLoaded', () => {
-            // --- ALL DOM ELEMENTS ---
             const jobListContainer = document.getElementById('job-list-container');
             const jobDetailsContainer = document.getElementById('job-details-container');
             const applicationModal = document.getElementById('applicationModal');
             const applicationForm = document.getElementById('applicationForm');
             const closeBtn = applicationModal.querySelector('.modal-close-btn');
+            const successModal = document.getElementById('successModal');
+            const successModalOkBtn = document.getElementById('successModalOkBtn');
             
             const jobsDataMap = new Map();
 
-            // --- MODAL LOGIC ---
-            const openModal = () => applicationModal.classList.add('show');
-            const closeModal = () => applicationModal.classList.remove('show');
+            const openModal = (modal) => modal.classList.add('show');
+            const closeModal = (modal) => modal.classList.remove('show');
 
-            closeBtn.addEventListener('click', closeModal);
+            closeBtn.addEventListener('click', () => closeModal(applicationModal));
             applicationModal.addEventListener('click', (e) => {
-                if (e.target === applicationModal) closeModal();
+                if (e.target === applicationModal) closeModal(applicationModal);
+            });
+            
+            successModalOkBtn.addEventListener('click', () => {
+                closeModal(successModal);
+                closeModal(applicationModal);
+                applicationForm.reset();
             });
 
-            // --- JOB DETAILS RENDERING ---
             const renderJobDetails = (jobId) => {
                 const job = jobsDataMap.get(jobId);
                 if (!job) return;
@@ -134,11 +133,7 @@
                 const skills = job.requiredSkills ? job.requiredSkills.split(',').map(s => s.trim()) : [];
 
                 jobDetailsContainer.innerHTML = `
-                    <div class="detail-header">
-                        <h2>${job.jobTitle}</h2>
-                        <a href="#" class="company-link">${job.department} <i class="fas fa-external-link-alt"></i></a>
-                        <p class="location">${job.location}</p>
-                    </div>
+                    <div class="detail-header"><h2>${job.jobTitle}</h2><a href="#" class="company-link">${job.department} <i class="fas fa-external-link-alt"></i></a><p class="location">${job.location}</p></div>
                     <div class="job-details-content">
                         <h3>Job details</h3>
                         <div class="detail-section"><h4><i class="fas fa-money-bill-wave"></i> Pay</h4><div class="detail-tags"><span class="tag salary-tag">PHP ${job.salaryMin} - PHP ${job.salaryMax} a month</span></div></div>
@@ -149,18 +144,15 @@
                     </div>`;
             };
 
-            // --- JOB LIST FETCHING & RENDERING ---
             const fetchAndRenderJobs = async () => {
                 try {
                     const postingsCollection = collection(db, 'jobPostings');
                     const q = query(postingsCollection, where("status", "==", "Open"));
                     const querySnapshot = await getDocs(q);
-
                     if (querySnapshot.empty) {
                         jobListContainer.innerHTML = '<p class="info-text">No open positions at this time.</p>';
                         return;
                     }
-
                     let jobListHtml = '';
                     querySnapshot.forEach(doc => {
                         const job = doc.data();
@@ -168,14 +160,12 @@
                         jobListHtml += `<div class="job-card" data-id="${doc.id}"><h3>${job.jobTitle}</h3><p class="company-name">${job.department}</p><p class="location">${job.location}</p><p class="salary-info">PHP ${job.salaryMin} - PHP ${job.salaryMax} a month</p><div class="tags-container"><span class="tag">${job.jobType}</span></div><p class="easily-apply"><i class="fas fa-bolt"></i> Easily apply</p></div>`;
                     });
                     jobListContainer.innerHTML = jobListHtml;
-
                 } catch (error) {
                     console.error("Error fetching jobs:", error);
                     jobListContainer.innerHTML = '<p class="error-text">Could not load jobs. Please try again later.</p>';
                 }
             };
             
-            // --- EVENT DELEGATION FOR DYNAMIC BUTTONS ---
             jobListContainer.addEventListener('click', (e) => {
                 const card = e.target.closest('.job-card');
                 if (card) {
@@ -190,11 +180,10 @@
                     e.preventDefault();
                     const jobTitle = e.target.dataset.jobTitle;
                     applicationForm.querySelector('#projectName').value = jobTitle;
-                    openModal();
+                    openModal(applicationModal);
                 }
             });
             
-            // --- FORM SUBMISSION LOGIC ---
             applicationForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const submitBtn = applicationForm.querySelector('button.submit-btn');
@@ -219,9 +208,7 @@
 
                 try {
                     await addDoc(collection(db, "applications"), formData);
-                    alert("Application submitted successfully!");
-                    applicationForm.reset();
-                    closeModal();
+                    openModal(successModal); // Show success modal instead of alert
                 } catch (error) {
                     console.error("Error adding document: ", error);
                     alert("Error submitting application. Please try again.");
