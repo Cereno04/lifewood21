@@ -110,8 +110,9 @@ img {
 .btn-contact {
     background: #FFB347;
     border: 1px solid var(--primary-color);
-    color: White;
+    color: var(--dark-text); /* MODIFIED: Text color changed from white to dark to match image */
     border-radius: 5px;
+    padding: 10px 26px; /* ADDED: Refined padding to match image */
 }
 
 .btn-contact:hover {
@@ -140,7 +141,7 @@ img {
 
 .logo img {
     display: block;
-    width: 175px;
+    width: 150px; /* MODIFIED: Adjusted for better proportion on desktop */
 }
 
 /* --- Mobile Menu Styles --- */
@@ -757,11 +758,12 @@ img {
         position: static;
         flex-direction: row;
         width: auto;
+        height: auto; /* Revert height for desktop */
         background-color: transparent;
         box-shadow: none;
         padding: 0;
         align-items: center;
-        gap: 1rem;
+        gap: 2.5rem; /* MODIFIED: Increased gap between nav items */
         
         /* Ensure mobile animation styles are turned off for desktop */
         opacity: 1;
@@ -770,12 +772,15 @@ img {
         pointer-events: auto;
     }
     .nav-link a {
-        font-size: 1.1rem; /* Revert font size for desktop */
-        padding: 0.75rem 1rem;
+        font-size: 1rem; /* Revert font size for desktop */
+        padding: 0.5rem 1rem;
+        font-weight: 400; /* MODIFIED: Set non-active links to normal weight */
     }
+    /* ADDED: New rule to adjust active underline for desktop */
     .nav-link.active a::after {
-        bottom: 5px;
+        bottom: 0.4rem;
         width: 25px;
+        height: 2px;
     }
     .nav-link {
         padding: 0;
@@ -790,6 +795,7 @@ img {
     }
     .nav-actions {
         display: flex;
+        gap: 1.25rem; /* MODIFIED: Adjusted gap for a tighter layout */
     }
 
     /* Grids */
@@ -932,8 +938,34 @@ img {
         grid-template-columns: none;
         gap: 0;
     }
-    /* NOTE: The .nav-links rules have been removed from here */
-    /* to allow the full-screen menu to persist on tablets. */
+    /* Revert links to hidden, full-screen dropdown */
+    .nav-links {
+        position: fixed;
+        flex-direction: column;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: var(--bg-white);
+        box-shadow: none;
+        gap: 1rem;
+        justify-content: center;
+        
+        /* Ensure the smooth animation styles are applied here too */
+        opacity: 0;
+        transform: translateY(-10px);
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0s linear 0.3s;
+    }
+    /* Ensure JS toggle works */
+    .nav-links.active {
+        opacity: 1;
+        transform: translateY(0);
+        visibility: visible;
+        pointer-events: auto;
+        transition-delay: 0s;
+    }
 }
 
 
