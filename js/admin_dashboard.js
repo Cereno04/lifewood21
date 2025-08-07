@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const status = applicant.status || 'Pending';
                 const statusClass = status.replace(/\s+/g, '-').toLowerCase();
                 const statusBadge = `<span class="status-badge status-${statusClass}">${status}</span>`;
-                const actionButtons = `<button class="btn-action btn-edit" data-id="${doc.id}" title="Edit"><i class="fas fa-pencil-alt"></i></button><button class="btn-action btn-delete" data-id="${doc.id}" title="Delete"><i class="fas fa-trash-alt"></i></button><button class="btn-action btn-delete" data-id="${doc.id}" title="View Resume"><i class="fas fa-file-alt"></i></button>`;
+                const actionButtons = `<button class="btn-action btn-edit" data-id="${doc.id}" title="Edit"><i class="fas fa-pencil-alt"></i></button><button class="btn-action btn-delete" data-id="${doc.id}" title="Delete"><i class="fas fa-trash-alt"></i></button>;
                 tableBody.innerHTML += `<tr data-id="${doc.id}"><td>${applicant.firstName || ''} ${applicant.lastName || ''}</td><td>${applicant.email || ''}</td><td>${statusBadge}</td><td>${applicant.projectName || ''}</td><td class="actions">${actionButtons}</td></tr>`;
             });
         } catch (error) {
