@@ -110,9 +110,9 @@ img {
 .btn-contact {
     background: #FFB347;
     border: 1px solid var(--primary-color);
-    color: var(--dark-text); /* MODIFIED: Text color changed from white to dark to match image */
+    color: var(--dark-text); 
     border-radius: 5px;
-    padding: 10px 26px; /* ADDED: Refined padding to match image */
+    padding: 10px 26px; 
 }
 
 .btn-contact:hover {
@@ -141,28 +141,27 @@ img {
 
 .logo img {
     display: block;
-    width: 150px; /* MODIFIED: Adjusted for better proportion on desktop */
+    width: 150px; 
 }
 
 /* --- Mobile Menu Styles --- */
 .nav-links {
-    /* Change to full-screen overlay */
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100vh; /* Use viewport height for full screen */
+    height: 100vh;
     background-color: var(--bg-white);
-    z-index: 999; /* Keep it behind the header which has the close button */
+    /* IMPORTANT: Lower z-index than the header */
+    /* so the close button in the header is clickable */
+    z-index: 999; 
 
-    /* Center the links */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 1rem; /* Space between links */
+    gap: 1rem; 
     
-    /* Original transition for opening/closing */
     opacity: 0;
     transform: translateY(-10px);
     visibility: hidden;
@@ -179,18 +178,14 @@ img {
 }
 
 /* --- Navigation Link Styling (No Background on Hover) --- */
-
-/* The list item container for the link */
 .nav-link {
     text-align: center;
 }
 
-/* The link element itself */
 .nav-link a {
     display: inline-block;
-    /* Make links larger for full-screen menu */
     padding: 0.5rem 1rem;
-    font-size: 1.75rem; /* Larger font for full-screen */
+    font-size: 1.75rem; 
     font-weight: 500;
     color: var(--dark-text);
     text-decoration: none;
@@ -198,32 +193,29 @@ img {
     transition: color 0.3s ease;
 }
 
-/* HOVER STATE: This is now the primary hover effect */
 .nav-link a:hover {
     color: var(--primary-color);
 }
 
-/* ACTIVE STATE: For the current page link */
 .nav-link.active a {
     color: var(--primary-color);
     font-weight: 600;
 }
 
-/* The underline for the active link */
 .nav-link.active a::after {
     content: '';
     position: absolute;
-    bottom: 0; /* Adjust to be closer to the larger text */
+    bottom: 0; 
     left: 50%;
     transform: translateX(-50%);
-    width: 40px; /* Widen for the larger font */
+    width: 40px; 
     height: 3px;
     background-color: var(--accent-color);
     border-radius: 2px;
 }
 
 .nav-actions {
-    display: none; /* Hide on mobile */
+    display: none; 
     align-items: center;
     gap: 1.5rem;
 }
@@ -239,11 +231,12 @@ img {
     flex-direction: column;
     gap: 5px;
     cursor: pointer;
-    /* --- NEW STYLES --- */
-    /* Reset default button styles to make it look like the old div */
     background: transparent;
     border: none;
     padding: 0;
+    /* ADDED: A high z-index ensures the hamburger/close icon */
+    /* is always on top of the menu and clickable. */
+    z-index: 1001; 
 }
 
 .hamburger .bar {
@@ -254,6 +247,7 @@ img {
     transition: all 0.3s ease-in-out;
 }
 
+/* This is where the 'X' is created by transforming the bars */
 .hamburger.active .bar:nth-child(1) {
     transform: translateY(8px) rotate(45deg);
 }
@@ -746,7 +740,7 @@ img {
 /* --- Tablets and Up (768px and up) --- */
 @media (min-width: 768px) {
     .eco-innovation-grid {
-        grid-template-columns: repeat(2, 1fr); /* Creates two columns on tablets and larger */
+        grid-template-columns: repeat(2, 1fr); 
         gap: 3rem;
     }
     
@@ -758,25 +752,23 @@ img {
         position: static;
         flex-direction: row;
         width: auto;
-        height: auto; /* Revert height for desktop */
+        height: auto; 
         background-color: transparent;
         box-shadow: none;
         padding: 0;
         align-items: center;
-        gap: 2.5rem; /* MODIFIED: Increased gap between nav items */
+        gap: 2.5rem; 
         
-        /* Ensure mobile animation styles are turned off for desktop */
         opacity: 1;
         transform: none;
         visibility: visible;
         pointer-events: auto;
     }
     .nav-link a {
-        font-size: 1rem; /* Revert font size for desktop */
+        font-size: 1rem; 
         padding: 0.5rem 1rem;
-        font-weight: 600; /* MODIFIED: Set non-active links to normal weight */
+        font-weight: 400; 
     }
-    /* ADDED: New rule to adjust active underline for desktop */
     .nav-link.active a::after {
         bottom: 0.4rem;
         width: 25px;
@@ -795,7 +787,7 @@ img {
     }
     .nav-actions {
         display: flex;
-        gap: 1.25rem; /* MODIFIED: Adjusted gap for a tighter layout */
+        gap: 1.25rem; 
     }
 
     /* Grids */
@@ -817,8 +809,8 @@ img {
     .process-step:not(:last-child)::after {
         content: '';
         position: absolute;
-        left: 25px; /* Aligns with the number */
-        top: 60px; /* Starts below the number */
+        left: 25px; 
+        top: 60px; 
         width: 2px;
         height: calc(100% - 30px);
         background: repeating-linear-gradient(
@@ -834,9 +826,8 @@ img {
         gap: 2rem;
     }
     .process-step:not(:last-child)::after {
-        /* Switch line to horizontal for desktop view */
         left: 100%;
-        top: 25px; /* Vertically centered on number */
+        top: 25px; 
         width: calc(100% - 50px);
         height: 2px;
         transform: translate(-50%, 0);
@@ -844,13 +835,13 @@ img {
 }
 
 .global-presence-section {
-    background-color: var(--bg-light); /* Consistent light background */
+    background-color: var(--bg-light); 
     text-align: center;
 }
 
 .global-subheadline {
     max-width: 600px;
-    margin: 0 auto 2.5rem auto; /* Centers the subheadline and adds space below */
+    margin: 0 auto 2.5rem auto; 
     color: var(--body-text);
     font-size: 1.1rem;
 }
@@ -859,17 +850,16 @@ img {
     max-width: 80%;
     height: 260px;
     border:#ececec solid 2px;
-    max-height: 400px; /* Prevents the map from being excessively tall */
-    margin: 0 auto 3rem auto; /* Centers map and adds space below */
-/*     opacity: 0.7; */
+    max-height: 400px; 
+    margin: 0 auto 3rem auto; 
 }
 
 .global-locations-grid {
     display: grid;
-    grid-template-columns: 1fr; /* Default to a single column for mobile */
+    grid-template-columns: 1fr; 
     gap: 1.5rem;
     max-width: 1000px;
-    margin: 0 auto; /* Center the grid container itself */
+    margin: 0 auto; 
 }
 
 .global-location-item {
@@ -887,7 +877,7 @@ img {
 
 .global-location-item i {
     font-size: 2rem;
-    color: var(--primary-color); /* Uses your site's main green color */
+    color: var(--primary-color); 
     margin-bottom: 1rem;
 }
 
@@ -909,9 +899,6 @@ img {
 /*
  * ====================================================================
  * NEW: TABLET-ONLY NAVIGATION OVERRIDE
- *
- * This block forces the hamburger menu for screen sizes between
- * 768px and 1023px, overriding the desktop styles above.
  * ====================================================================
  */
 @media (min-width: 576px) {
@@ -922,15 +909,12 @@ img {
 
 
 @media (min-width: 768px) and (max-width: 1023.98px) {
-    /* Restore the hamburger icon */
     .hamburger {
         display: flex;
     }
-    /* Hide the desktop actions */
     .nav-actions {
         display: none;
     }
-    /* Revert nav to mobile layout */
     .main-nav {
         display: flex;
         justify-content: space-between;
@@ -938,7 +922,6 @@ img {
         grid-template-columns: none;
         gap: 0;
     }
-    /* Revert links to hidden, full-screen dropdown */
     .nav-links {
         position: fixed;
         flex-direction: column;
@@ -951,14 +934,12 @@ img {
         gap: 1rem;
         justify-content: center;
         
-        /* Ensure the smooth animation styles are applied here too */
         opacity: 0;
         transform: translateY(-10px);
         visibility: hidden;
         pointer-events: none;
         transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0s linear 0.3s;
     }
-    /* Ensure JS toggle works */
     .nav-links.active {
         opacity: 1;
         transform: translateY(0);
@@ -972,7 +953,7 @@ img {
 /* --- Laptops & Desktops (1024px and up) --- */
 @media (min-width: 1024px) {
     .eco-innovation-grid {
-        gap: 5rem; /* Increase gap on larger screens for more breathing room */
+        gap: 5rem;
     }
     .solutions-grid {
         grid-template-columns: repeat(3, 1fr);
@@ -988,8 +969,8 @@ img {
 
 /* --- Generic Page Header --- */
 .page-header {
-    background-color: #f5eedb; /* Matches solutions section bg */
-    padding: 249px 0; /* Adjusted padding */
+    background-color: #f5eedb; 
+    padding: 249px 0; 
     text-align: center;
 }
 
@@ -1094,7 +1075,7 @@ img {
 /* --- Responsive Adjustments for New Sections --- */
 @media (min-width: 992px) {
     .contact-grid {
-        grid-template-columns: 1.2fr 1fr; /* Give form a bit more space */
+        grid-template-columns: 1.2fr 1fr; 
     }
      .global-locations-grid {
         grid-template-columns: repeat(4, 1fr);
@@ -1147,13 +1128,12 @@ img {
 }
 
 .feature-item {
-    /* display: flex; */
     align-items: flex-start;
     gap: 1rem;
 }
 
 .feature-icon {
-    color: var(--primary-color); /* Using brand color instead of blue */
+    color: var(--primary-color); 
     font-size: 1.75rem;
     flex-shrink: 0;
     margin-top: 5px;
@@ -1175,7 +1155,7 @@ img {
 /* Responsive adjustments for the new section */
 @media (min-width: 992px) {
     .who-we-are-grid {
-        grid-template-columns: 1fr 1.1fr; /* Image and text columns */
+        grid-template-columns: 1fr 1.1fr; 
         gap: 4rem;
     }
     
@@ -1188,7 +1168,6 @@ img {
 /* 11. MODAL FUNCTIONALITY - NO FORM STYLING CHANGES      */
 /* ====================================================== */
 
-/* This styles the full-screen dark background. */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -1196,27 +1175,24 @@ img {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.6);
-    display: flex; /* Centers the form container inside */
+    display: flex; 
     align-items: center;
     justify-content: center;
     z-index: 1001;
     padding: 1rem;
     
-    /* Hides the modal by default */
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
     transition: opacity 0.3s ease;
 }
 
-/* This class is added by your JavaScript to show the modal */
 .modal-overlay.show {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
 }
 
-/* This ensures the form container itself can be scrolled on small screens if needed */
 .form-container {
     max-height: 90vh;
     overflow-y: auto;
