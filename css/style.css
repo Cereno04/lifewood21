@@ -8,6 +8,7 @@
     --accent-color: #FFB347; /* Orange/Gold */
     --dark-text: #212529;
     --body-text: #555;
+
     --light-text: #f8f9fa;
     --bg-light: #f8f9fa;
     --bg-white: #ffffff;
@@ -144,16 +145,23 @@ img {
 
 /* --- Mobile Menu Styles --- */
 .nav-links {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 100%;
+    /* Change to full-screen overlay */
+    position: fixed;
+    top: 0;
     left: 0;
     width: 100%;
+    height: 100vh; /* Use viewport height for full screen */
     background-color: var(--bg-white);
-    box-shadow: 0 10px 10px rgba(0,0,0,0.05);
+    z-index: 999; /* Keep it behind the header which has the close button */
+
+    /* Center the links */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem; /* Space between links */
     
-    /* PERFORMANCE FIX: Replaced laggy 'max-height' with smooth 'transform' & 'opacity' */
+    /* Original transition for opening/closing */
     opacity: 0;
     transform: translateY(-10px);
     visibility: hidden;
@@ -179,14 +187,14 @@ img {
 /* The link element itself */
 .nav-link a {
     display: inline-block;
-    padding: 0.75rem 1rem;
-    font-size: 1.1rem;
+    /* Make links larger for full-screen menu */
+    padding: 0.5rem 1rem;
+    font-size: 1.75rem; /* Larger font for full-screen */
     font-weight: 500;
     color: var(--dark-text);
     text-decoration: none;
     position: relative;
     transition: color 0.3s ease;
-    border-radius: 50px;
 }
 
 /* HOVER STATE: This is now the primary hover effect */
@@ -204,10 +212,10 @@ img {
 .nav-link.active a::after {
     content: '';
     position: absolute;
-    bottom: 5px;
+    bottom: 0; /* Adjust to be closer to the larger text */
     left: 50%;
     transform: translateX(-50%);
-    width: 25px;
+    width: 40px; /* Widen for the larger font */
     height: 3px;
     background-color: var(--accent-color);
     border-radius: 2px;
@@ -642,11 +650,6 @@ img {
         margin: 0 0.5rem;
     }
 
-    /* Navigation tweaks */
-    .nav-link a {
-        padding: 0.5rem 1rem;
-    }
-
     /* About Page */
     .who-we-are-image img {
         height: 200px;
@@ -765,6 +768,14 @@ img {
         transform: none;
         visibility: visible;
         pointer-events: auto;
+    }
+    .nav-link a {
+        font-size: 1.1rem; /* Revert font size for desktop */
+        padding: 0.75rem 1rem;
+    }
+    .nav-link.active a::after {
+        bottom: 5px;
+        width: 25px;
     }
     .nav-link {
         padding: 0;
@@ -921,33 +932,8 @@ img {
         grid-template-columns: none;
         gap: 0;
     }
-    /* Revert links to hidden dropdown */
-    .nav-links {
-        position: absolute;
-        flex-direction: column;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        background-color: var(--bg-white);
-        box-shadow: 0 10px 10px rgba(0,0,0,0.05);
-        gap: 0;
-        justify-content: initial;
-        
-        /* Ensure the smooth animation styles are applied here too */
-        opacity: 0;
-        transform: translateY(-10px);
-        visibility: hidden;
-        pointer-events: none;
-        transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0s linear 0.3s;
-    }
-    /* Ensure JS toggle works */
-    .nav-links.active {
-        opacity: 1;
-        transform: translateY(0);
-        visibility: visible;
-        pointer-events: auto;
-        transition-delay: 0s;
-    }
+    /* NOTE: The .nav-links rules have been removed from here */
+    /* to allow the full-screen menu to persist on tablets. */
 }
 
 
