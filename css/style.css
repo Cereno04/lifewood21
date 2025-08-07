@@ -774,7 +774,7 @@ img {
     .nav-link a {
         font-size: 1rem; /* Revert font size for desktop */
         padding: 0.5rem 1rem;
-        font-weight: 400; /* MODIFIED: Set non-active links to normal weight */
+        font-weight: 600; /* MODIFIED: Set non-active links to normal weight */
     }
     /* ADDED: New rule to adjust active underline for desktop */
     .nav-link.active a::after {
