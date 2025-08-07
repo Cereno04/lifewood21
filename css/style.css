@@ -146,24 +146,20 @@ img {
 .nav-links {
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Center links vertically */
-    align-items: center; /* Center links horizontally */
-    position: fixed; /* Change to fixed to cover the screen */
-    top: 0;
+    position: absolute;
+    top: 100%;
     left: 0;
     width: 100%;
-    height: 100vh; /* Full viewport height */
     background-color: var(--bg-white);
-    z-index: 999; /* IMPORTANT: Place it behind the header (z-index: 1000) */
+    box-shadow: 0 10px 10px rgba(0,0,0,0.05);
     
-    /* Animation for showing/hiding */
+    /* PERFORMANCE FIX: Replaced laggy 'max-height' with smooth 'transform' & 'opacity' */
     opacity: 0;
     transform: translateY(-10px);
     visibility: hidden;
     pointer-events: none;
     transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0s linear 0.3s;
 }
-
 
 .nav-links.active {
     opacity: 1;
